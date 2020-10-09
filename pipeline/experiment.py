@@ -115,9 +115,3 @@ class GymExperiment:
             env.reset()
 
         return exp_train_output, exp_test_output
-
-    def run_one_episode(self, env, agent):
-        pass
-
-    def save_output(self, i, output, exp_subfolder):
-        pass
