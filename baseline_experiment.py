@@ -1,7 +1,6 @@
 import logging
 import time
 
-from pipeline import PSTestSeed
 from pipeline.ps_env import save_ps_output
 from project import Project
 
@@ -24,7 +23,6 @@ def baseline_experiment(folder, ks, p_ref=1.2):
             'path': Project.get_fmu("PS_20TCL_v1.fmu"),
             'simulation_start_time': 0
         }
-        fixed_test_set = PSTestSeed(100)
         test_env_config = {
             "entry_point": "pipeline:PSEnvV1",
             'p_reff': p_ref,
@@ -33,7 +31,6 @@ def baseline_experiment(folder, ks, p_ref=1.2):
             'compute_reward': None,
             'p_reff_amplitude': 0,
             'p_reff_period': 200,
-            'get_seed': lambda: fixed_test_set.get_seed(),
             'path': Project.get_fmu("PS_20TCL_v1.fmu"),
             'simulation_start_time': 0
         }
@@ -58,4 +55,6 @@ def baseline_experiment(folder, ks, p_ref=1.2):
 
 
 if __name__ == '__main__':
-    baseline_experiment("results/baseline/p_ref=1.2", ks=[5])
+    baseline_experiment("results/baseline", ks=[1, 2, 5])
+    # baseline_experiment("results/baseline/p_ref=1.2", ks=[3])
+    # baseline_experiment("results/baseline", ks=[3])

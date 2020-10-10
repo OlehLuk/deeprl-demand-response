@@ -23,7 +23,6 @@ if __name__ == '__main__':
         'path': Project.get_fmu("PS_20TCL_v1.fmu"),
         'simulation_start_time': 0
     }
-    fixed_test_set = PSTestSeed(10000)
     test_env_config = {
         "entry_point": "pipeline:PSEnvV1",
         'p_reff': 1.2,
@@ -32,7 +31,6 @@ if __name__ == '__main__':
         'compute_reward': None,
         'p_reff_amplitude': 0,
         'p_reff_period': 200,
-        'get_seed': lambda: fixed_test_set.get_seed(),
         'path': Project.get_fmu("PS_20TCL_v1.fmu"),
         'simulation_start_time': 0
     }
@@ -51,12 +49,19 @@ if __name__ == '__main__':
     experiment_config = {
         "exp_folder": "results\\dqn_2",
         "exp_id": f"1",
-        "exp_repeat": 2,
-        "n_episodes_train": 10,
-        "n_episodes_test": 3
+        "exp_repeat": 5,
+        "n_episodes_train": 200,
+        "n_episodes_test": 100
     }
     baseline = GymExperiment(env_config, agent_config, experiment_config,
                              lambda x: DQN_2_Wrapper(**x),
                              save_experiment_output=save_ps_output,
                              test_env_config=test_env_config)
     baseline.run()
+    env_config['compute_reward'] = lambda u, v: 1/abs(u-v)
+    experiment_config['exp_id'] = "2"
+    dqn_2 = GymExperiment(env_config, agent_config, experiment_config,
+                          lambda x: DQN_2_Wrapper(**x),
+                          save_experiment_output=save_ps_output,
+                          test_env_config=test_env_config)
+    dqn_2.run()
