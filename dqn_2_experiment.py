@@ -44,7 +44,7 @@ if __name__ == '__main__':
         'gamma': 0.99,
         'batch_size': 64,
         'min_eps': 0.01,
-        'eps_decrease_last_episode': 50,
+        'eps_decrease_last_episode': 25,
         'actions': [0, 1, 2, 4, 8, 16, 32]
     }
 

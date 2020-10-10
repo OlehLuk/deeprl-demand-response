@@ -180,6 +180,18 @@ def save_ps_output(all_outputs, exp_subfolder):
         pa_test = [episode_output['p_actual'] for episode_output in exp_test_results]
         pr_train = [episode_output['p_reference'] for episode_output in exp_train_results]
         pr_test = [episode_output['p_reference'] for episode_output in exp_test_results]
+        actions_train = [episode_output['action'] for episode_output in exp_train_results]
+        actions_test = [episode_output['action'] for episode_output in exp_test_results]
+
+        np.savetxt(fname=os.path.join(system_subfolder, f"actions_train_{i}.csv"),
+                   X=np.transpose(actions_train),
+                   delimiter=",",
+                   fmt="%d")
+
+        np.savetxt(fname=os.path.join(system_subfolder, f"actions_test_{i}.csv"),
+                   X=np.transpose(actions_test),
+                   delimiter=",",
+                   fmt="%d")
 
         np.savetxt(fname=os.path.join(system_subfolder, f"power_actual_train_{i}.csv"),
                    X=np.transpose(pa_train),

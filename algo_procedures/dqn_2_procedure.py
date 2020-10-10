@@ -43,7 +43,6 @@ class DQN_2_Wrapper(AgentWrapper):
                 train_helper(self.agent, minibatch, self.gamma)
 
             state = next_state
-            eps = epsilon_annealing(self.episode_counter, self.eps_decrease_last_episode, self.min_eps)
             action_index = self.agent.get_action(state, eps)
             action = self.actions[action_index]
 
