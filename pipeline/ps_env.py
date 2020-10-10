@@ -1,14 +1,22 @@
+import json
 import logging
+import os
 import time
 
 import numpy as np
 from gym import spaces
-from modelicagym.environment import FMI1CSEnv, FMI2CSEnv
+
+from modelicagym.environment import FMI2CSEnv
+from project import Project
 
 logger = logging.getLogger(__name__)
 
 
 P_DIFF_THRESHOLD = 1
+
+
+def calc_mse(a, b):
+    return np.mean((np.array(a)-np.array(b))**2)
 
 
 class PSEnv:
@@ -92,8 +100,7 @@ class PSEnv:
             return self.compute_reward(u, p)
 
 
-class OMCSPSStochasticEnv(PSEnv, FMI2CSEnv):
-
+class PSEnvV1(PSEnv, FMI2CSEnv):
     def __init__(self,
                  p_reff,
                  time_step,
@@ -103,7 +110,7 @@ class OMCSPSStochasticEnv(PSEnv, FMI2CSEnv):
                  p_reff_period=200,
                  get_seed=lambda: round(time.time()),
                  p_diff_threshold=P_DIFF_THRESHOLD,
-                 path="../resources/PS_stochastic_JM.fmu",
+                 path=Project.get_fmu("PS_20TCL_v1.fmu"),
                  simulation_start_time=0):
 
         logger.setLevel(log_level)
@@ -136,3 +143,69 @@ class OMCSPSStochasticEnv(PSEnv, FMI2CSEnv):
         self.model_parameters.update({"globalSeed.useAutomaticSeed": 0})
         self.model_parameters.update({"globalSeed.fixedSeed": self.get_seed()})
         return super().reset()
+
+
+def save_ps_output(all_outputs, exp_subfolder):
+    mses_train = []
+    mses_test = []
+
+    raw_subfolder = os.path.join(exp_subfolder, "raw_data")
+    if os.path.exists(raw_subfolder):
+        raise FileExistsError("Experiment folder exists, not overriding it")
+    else:
+        os.mkdir(raw_subfolder)
+
+    system_subfolder = os.path.join(exp_subfolder, "system_behavior")
+    if os.path.exists(system_subfolder):
+        raise FileExistsError("Experiment folder exists, not overriding it")
+    else:
+        os.mkdir(system_subfolder)
+
+    for i, output in enumerate(all_outputs):
+        exp_train_results, exp_test_results = output
+        # save raw data
+        train_name = os.path.join(raw_subfolder, f"train_output_{i + 1}.json")
+        test_name = os.path.join(raw_subfolder, f"test_output_{i + 1}.json")
+        with open(train_name, 'w') as json_file:
+            json.dump({'output': exp_train_results}, json_file)
+        with open(test_name, 'w') as json_file:
+            json.dump({'output': exp_test_results}, json_file)
+
+        # save mse data
+        mses_train.append([episode_output['mse'] for episode_output in exp_train_results])
+        mses_test.append([episode_output['mse'] for episode_output in exp_test_results])
+
+        pa_train = [episode_output['p_actual'] for episode_output in exp_train_results]
+        pa_test = [episode_output['p_actual'] for episode_output in exp_test_results]
+        pr_train = [episode_output['p_reference'] for episode_output in exp_train_results]
+        pr_test = [episode_output['p_reference'] for episode_output in exp_test_results]
+
+        np.savetxt(fname=os.path.join(system_subfolder, f"power_actual_train_{i}.csv"),
+                   X=np.transpose(pa_train),
+                   delimiter=",",
+                   fmt="%.4f")
+
+        np.savetxt(fname=os.path.join(system_subfolder, f"power_actual_test_{i}.csv"),
+                   X=np.transpose(pa_test),
+                   delimiter=",",
+                   fmt="%.4f")
+        np.savetxt(fname=os.path.join(system_subfolder, f"power_reference_train_{i}.csv"),
+                   X=np.transpose(pr_train),
+                   delimiter=",",
+                   fmt="%.4f")
+
+        np.savetxt(fname=os.path.join(system_subfolder, f"power_reference_test_{i}.csv"),
+                   X=np.transpose(pr_test),
+                   delimiter=",",
+                   fmt="%.4f")
+
+
+    np.savetxt(fname=os.path.join(exp_subfolder, "train_mse.csv"),
+               X=np.transpose(mses_train),
+               delimiter=",",
+               fmt="%.4f")
+
+    np.savetxt(fname=os.path.join(exp_subfolder, "test_mse.csv"),
+               X=np.transpose(mses_test),
+               delimiter=",",
+               fmt="%.4f")

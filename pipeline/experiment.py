@@ -8,7 +8,7 @@ import numpy as np
 def save_dict_to_json(dictionary, exp_subfolder, file_name):
     exp_config_file = os.path.join(exp_subfolder, file_name)
     with open(exp_config_file, 'w') as json_file:
-        json.dump(dictionary, json_file)
+        json.dump(dictionary, json_file, default=lambda o: "<object not serializable>")
 
 
 class AgentWrapper(object):
@@ -31,12 +31,22 @@ def default_save_output(all_outputs, exp_subfolder):
 
 
 class GymExperiment:
-    def __init__(self, env_config: dict, alg_config: dict, exp_config: dict,
-                 create_agent_wrapper, save_experiment_output=default_save_output):
-        self.env_config = env_config
+    def __init__(self, train_env_config: dict, alg_config: dict, exp_config: dict,
+                 create_agent_wrapper, save_experiment_output=default_save_output,
+                 test_env_config=None):
+        self.env_name = train_env_config.pop("env_name", "PSwithFMU-v0")
+        if test_env_config is None:
+            test_env_entry_point = train_env_config.get("entry_point", "environments:JModelicaCSCartPoleEnv")
+        else:
+            test_env_entry_point = test_env_config.pop("entry_point", "environments:JModelicaCSCartPoleEnv")
+        train_env_entry_point = train_env_config.pop("entry_point", "environments:JModelicaCSCartPoleEnv")
+        self.env_entry_point = {"train": train_env_entry_point,
+                                "test": test_env_entry_point}
 
-        self.env_name = self.env_config.pop("env_name", "PSwithFMU-v0")
-        self.env_entry_point = self.env_config.pop("entry_point", "environments:JModelicaCSCartPoleEnv")
+        if test_env_config is None:
+            test_env_config = train_env_config
+        self.env_config = {"train": train_env_config,
+                           "test": test_env_config}
 
         self.alg_config = alg_config
 
@@ -53,7 +63,8 @@ class GymExperiment:
 
     def run(self):
         exp_subfolder = self.create_setup()
-        env = self.create_env()
+        env_test = self.create_env("train")
+        env_train = self.create_env("test")
 
         exec_times = []
         all_outputs = []
@@ -62,7 +73,7 @@ class GymExperiment:
             # TODO: add a progress bar
             start = time.time()
 
-            output = self.run_one_experiment(env, self.alg_config)
+            output = self.run_one_experiment(env_train, env_test)
             exec_times.append(time.time() - start)
             all_outputs.append(output)
 
@@ -73,17 +84,19 @@ class GymExperiment:
                    delimiter=",",
                    fmt="%d")
 
-        env.close()
-        del gym.envs.registry.env_specs[self.env_name]
+        env_train.close()
+        env_test.close()
+        del gym.envs.registry.env_specs[f"train_{self.env_name}"]
+        del gym.envs.registry.env_specs[f"test_{self.env_name}"]
 
-    def create_env(self):
+    def create_env(self, mode="train"):
         from gym.envs.registration import register
         register(
-            id=self.env_name,
-            entry_point=self.env_entry_point,
-            kwargs=self.env_config
+            id=f"{mode}_{self.env_name}",
+            entry_point=self.env_entry_point[mode],
+            kwargs=self.env_config[mode]
         )
-        env = gym.make(self.env_name)
+        env = gym.make(f"{mode}_{self.env_name}")
         return env
 
     def create_setup(self):
@@ -99,19 +112,19 @@ class GymExperiment:
         save_dict_to_json(self.alg_config, exp_subfolder, "alg_config.json")
         return exp_subfolder
 
-    def run_one_experiment(self, env, alg_config):
+    def run_one_experiment(self, env_train, env_test):
         exp_train_output = []
-        agent_wrapper: AgentWrapper = self.create_agent_wrapper(**alg_config)
+        agent_wrapper: AgentWrapper = self.create_agent_wrapper(self.alg_config)
         for i in range(self.n_episodes_train):
             # TODO: allow early stopping?
-            episode_output = agent_wrapper.run_one_train_episode(env)
+            episode_output = agent_wrapper.run_one_train_episode(env_train)
             exp_train_output.append(episode_output)
-            env.reset()
+            env_train.reset()
 
         exp_test_output = []
         for i in range(self.n_episodes_test):
-            episode_output = agent_wrapper.run_one_test_episode(env)
+            episode_output = agent_wrapper.run_one_test_episode(env_test)
             exp_test_output.append(episode_output)
-            env.reset()
+            env_test.reset()
 
         return exp_train_output, exp_test_output
