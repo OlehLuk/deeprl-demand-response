@@ -1,4 +1,5 @@
 from pipeline.experiment import AgentWrapper
+from pipeline import calc_mse
 
 
 class ConstantControlWrapper(AgentWrapper):
@@ -19,8 +20,10 @@ class ConstantControlWrapper(AgentWrapper):
             output['action'].append(self.k)
             if done:
                 break
+        mse = calc_mse(output['p_actual'], output['p_reference'])
+        output['mse'] = mse
         return output
 
     def run_one_test_episode(self, env) -> dict:
-        return self.run_one_test_episode(env)
+        return self.run_one_train_episode(env)
 
