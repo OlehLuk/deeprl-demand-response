@@ -44,7 +44,7 @@ class GymExperiment:
 
         self.exp_folder = exp_config.get("exp_folder", ".")
         self.exp_id = exp_config.get("exp_id", "0")
-        self.exp_repeat = exp_config.get("exp_folder", 1)
+        self.exp_repeat = exp_config.get("exp_repeat", 1)
         self.n_episodes_train = exp_config.get("n_episodes_train", 200)
         self.n_episodes_test = exp_config.get("n_episodes_test", 100)
 
@@ -101,9 +101,9 @@ class GymExperiment:
 
     def run_one_experiment(self, env, alg_config):
         exp_train_output = []
-        agent_wrapper: AgentWrapper = self.create_agent_wrapper(alg_config)
+        agent_wrapper: AgentWrapper = self.create_agent_wrapper(**alg_config)
         for i in range(self.n_episodes_train):
-            # TODO: allow early stopping
+            # TODO: allow early stopping?
             episode_output = agent_wrapper.run_one_train_episode(env)
             exp_train_output.append(episode_output)
             env.reset()

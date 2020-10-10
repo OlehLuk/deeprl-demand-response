@@ -13,13 +13,18 @@ class DQN_1_Wrapper(AgentWrapper):
         pass
 
     def run_one_train_episode(self, env) -> dict:
-        output = []
         state = env.reset()
+        p_actual, p_reference = state
         action = self.agent.use(state)
+        output = {'p_actual': [p_actual], 'p_reference': [p_reference], 'action': [action]}
+
         for i in range(self.max_n_steps):
-            # TODO: save observation to output properly
             next_state, reward, done, _ = env.step(action)
-            output.append(next_state)
+            p_actual, p_reference = next_state
+            output['p_actual'].append(p_actual)
+            output['p_reference'].append(p_reference)
+            output['action'].append(action)
+
             action = self.agent.learn(state, action, reward, next_state)
             state = next_state
             if done:
@@ -28,13 +33,18 @@ class DQN_1_Wrapper(AgentWrapper):
         return output
 
     def run_one_test_episode(self, env) -> dict:
-        output = []
         state = env.reset()
+        p_actual, p_reference = state
         action = self.agent.use(state)
+        output = {'p_actual': [p_actual], 'p_reference': [p_reference], 'action': [action]}
+
         for i in range(self.max_n_steps):
-            # TODO: save observation to output properly
             next_state, reward, done, _ = env.step(action)
-            output.append(next_state)
+            p_actual, p_reference = next_state
+            output['p_actual'].append(p_actual)
+            output['p_reference'].append(p_reference)
+            output['action'].append(action)
+
             action = self.agent.use(next_state)
             if done:
                 break

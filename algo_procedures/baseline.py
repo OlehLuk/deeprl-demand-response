@@ -7,10 +7,16 @@ class ConstantControlWrapper(AgentWrapper):
         self.max_steps = max_steps
 
     def run_one_train_episode(self, env) -> dict:
-        output = []
+        state = env.reset()
+        p_actual, p_reference = state
+        output = {'p_actual': [p_actual], 'p_reference': [p_reference], 'action': [self.k]}
+
         for i in range(self.max_steps):
             obs, rew, done, _ = env.step(self.k)
-            output.append(obs)
+            p_actual, p_reference = obs
+            output['p_actual'].append(p_actual)
+            output['p_reference'].append(p_reference)
+            output['action'].append(self.k)
             if done:
                 break
         return output
