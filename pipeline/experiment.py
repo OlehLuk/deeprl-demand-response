@@ -34,6 +34,7 @@ class GymExperiment:
     def __init__(self, train_env_config: dict, alg_config: dict, exp_config: dict,
                  create_agent_wrapper, save_experiment_output=default_save_output,
                  test_env_config=None):
+
         self.env_name = train_env_config.pop("env_name", "PSwithFMU-v0")
         if test_env_config is None:
             test_env_entry_point = train_env_config.get("entry_point", "environments:JModelicaCSCartPoleEnv")
@@ -63,8 +64,8 @@ class GymExperiment:
 
     def run(self):
         exp_subfolder = self.create_setup()
-        env_test = self.create_env("train")
-        env_train = self.create_env("test")
+        env_train = self.create_env("train")
+        env_test = self.create_env("test")
 
         exec_times = []
         all_outputs = []

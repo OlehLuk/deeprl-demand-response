@@ -111,7 +111,8 @@ class PSEnvV1(PSEnv, FMI2CSEnv):
                  get_seed=lambda: round(time.time()),
                  p_diff_threshold=P_DIFF_THRESHOLD,
                  path=Project.get_fmu("PS_20TCL_v1.fmu"),
-                 simulation_start_time=0):
+                 simulation_start_time=0,
+                 *args, **kwargs):
 
         logger.setLevel(log_level)
         self.p_reff = p_reff

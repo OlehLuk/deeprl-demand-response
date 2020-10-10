@@ -11,5 +11,5 @@ class PSTestSeed:
 
     def get_seed(self):
         seed = self.seeds[self.pointer]
-        self.pointer = self.pointer + 1 % self.size
+        self.pointer = (self.pointer + 1) % self.size
         return seed
