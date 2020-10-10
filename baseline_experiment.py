@@ -45,7 +45,7 @@ def baseline_experiment(folder, ks, p_ref=1.2):
             "exp_id": f"k={k}",
             "exp_repeat": 1,
             "n_episodes_train": 0,
-            "n_episodes_test": 5
+            "n_episodes_test": 100
         }
         baseline = GymExperiment(env_config, agent_config, experiment_config,
                                  lambda x: ConstantControlWrapper(**x),
@@ -55,6 +55,6 @@ def baseline_experiment(folder, ks, p_ref=1.2):
 
 
 if __name__ == '__main__':
-    baseline_experiment("results/baseline", ks=[1, 2, 5])
+    baseline_experiment("results/baseline/p_ref=1.2", ks=[0, 1, 2, 3, 4, 5, 6, 7])
     # baseline_experiment("results/baseline/p_ref=1.2", ks=[3])
     # baseline_experiment("results/baseline", ks=[3])
