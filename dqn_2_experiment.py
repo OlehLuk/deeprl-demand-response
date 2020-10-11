@@ -4,8 +4,8 @@ model = load_fmu(Project.get_fmu("PS_20TCL_v1.fmu"))
 import logging
 import time
 
+from algo_procedures.dqn_2_delta_procedure import DQN_2_Delta_Wrapper
 from algo_procedures.dqn_2_procedure import DQN_2_Wrapper
-from pipeline import PSTestSeed
 from pipeline.experiment import GymExperiment
 from pipeline.ps_env import save_ps_output
 
@@ -42,7 +42,7 @@ if __name__ == '__main__':
         'gamma': 0.99,
         'batch_size': 64,
         'min_eps': 0.01,
-        'eps_decrease_last_episode': 25,
+        'eps_decrease_last_episode': 50,
         'actions': [0, 1, 2, 4, 8, 16, 32]
     }
 
@@ -57,8 +57,16 @@ if __name__ == '__main__':
                              lambda x: DQN_2_Wrapper(**x),
                              save_experiment_output=save_ps_output,
                              test_env_config=test_env_config)
-    baseline.run()
+    # baseline.run()
+    experiment_config['exp_id'] = "3"
+    dqn_3 = GymExperiment(env_config, agent_config, experiment_config,
+                          lambda x: DQN_2_Delta_Wrapper(**x),
+                          save_experiment_output=save_ps_output,
+                          test_env_config=test_env_config)
+    dqn_3.run()
+
     env_config['compute_reward'] = lambda u, v: 1/abs(u-v)
+    env_config['reward_fct_str'] = "lambda u, v: 1 / abs(u - v)"
     experiment_config['exp_id'] = "2"
     dqn_2 = GymExperiment(env_config, agent_config, experiment_config,
                           lambda x: DQN_2_Wrapper(**x),

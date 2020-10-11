@@ -1,5 +1,3 @@
-import numpy as np
-
 from project import Project
 from pyfmi import load_fmu
 model = load_fmu(Project.get_fmu("PS_20TCL_v1.fmu"))
@@ -7,7 +5,6 @@ import logging
 import time
 
 from algo_procedures.dqn_1_procedure import DQN_1_Wrapper
-from pipeline import PSTestSeed
 from pipeline.experiment import GymExperiment
 from pipeline.ps_env import save_ps_output
 
@@ -59,7 +56,6 @@ if __name__ == '__main__':
         "n_episodes_train": 200,
         "n_episodes_test": 100
     }
-    env_config['compute_reward'] = lambda u, v: 1 / abs(u - v)
     dqn_1 = GymExperiment(env_config, agent_config, experiment_config,
                           lambda x: DQN_1_Wrapper(**x),
                           save_experiment_output=save_ps_output,
@@ -67,6 +63,7 @@ if __name__ == '__main__':
     dqn_1.run()
 
     env_config['compute_reward'] = lambda u, v: 1/abs(u-v)
+    env_config['reward_fct_str'] = "lambda u, v: 1 / abs(u - v)"
     experiment_config['exp_id'] = "2"
     dqn_2 = GymExperiment(env_config, agent_config, experiment_config,
                           lambda x: DQN_1_Wrapper(**x),

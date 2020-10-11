@@ -41,8 +41,8 @@ class GymExperiment:
         if test_env_config is None:
             test_env_entry_point = train_env_config.get("entry_point", "environments:JModelicaCSCartPoleEnv")
         else:
-            test_env_entry_point = test_env_config.pop("entry_point", "environments:JModelicaCSCartPoleEnv")
-        train_env_entry_point = train_env_config.pop("entry_point", "environments:JModelicaCSCartPoleEnv")
+            test_env_entry_point = test_env_config.get("entry_point", "environments:JModelicaCSCartPoleEnv")
+        train_env_entry_point = train_env_config.get("entry_point", "environments:JModelicaCSCartPoleEnv")
         self.env_entry_point = {"train": train_env_entry_point,
                                 "test": test_env_entry_point}
 
