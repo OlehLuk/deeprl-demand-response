@@ -1,3 +1,4 @@
+from algo_procedures.dqn_1_delta_procedure import DQN_1_Delta_Wrapper
 from project import Project
 from pyfmi import load_fmu
 model = load_fmu(Project.get_fmu("PS_20TCL_v1.fmu"))
@@ -60,7 +61,14 @@ if __name__ == '__main__':
                           lambda x: DQN_1_Wrapper(**x),
                           save_experiment_output=save_ps_output,
                           test_env_config=test_env_config)
-    dqn_1.run()
+    # dqn_1.run()
+
+    experiment_config['exp_id'] = "2"
+    dqn_3 = GymExperiment(env_config, agent_config, experiment_config,
+                          lambda x: DQN_1_Delta_Wrapper(**x),
+                          save_experiment_output=save_ps_output,
+                          test_env_config=test_env_config)
+    dqn_3.run()
 
     env_config['compute_reward'] = lambda u, v: 1/abs(u-v)
     env_config['reward_fct_str'] = "lambda u, v: 1 / abs(u - v)"
@@ -69,4 +77,11 @@ if __name__ == '__main__':
                           lambda x: DQN_1_Wrapper(**x),
                           save_experiment_output=save_ps_output,
                           test_env_config=test_env_config)
-    dqn_2.run()
+    # dqn_2.run()
+
+    experiment_config['exp_id'] = "4"
+    dqn_4 = GymExperiment(env_config, agent_config, experiment_config,
+                          lambda x: DQN_1_Delta_Wrapper(**x),
+                          save_experiment_output=save_ps_output,
+                          test_env_config=test_env_config)
+    dqn_4.run()
