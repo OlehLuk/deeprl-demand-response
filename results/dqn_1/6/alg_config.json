@@ -1,0 +1,1 @@
+{"max_n_steps": 200, "actions": [0, 1, 2, 3, 4, 5, 6, 7], "n_state_variables": 2, "n_hidden_1": 64, "n_hidden_2": 64, "buffer_size": 512, "batch_size": 64, "exploration_rate": 0.5, "expl_rate_decay": 0.999, "expl_rate_final": 0.05, "discount_factor": 0.99, "target_update": 1000, "expl_decay_step": 1}
