@@ -80,4 +80,24 @@ if __name__ == '__main__':
                           lambda x: DQN_2_Delta_Wrapper(**x),
                           save_experiment_output=save_ps_output,
                           test_env_config=test_env_config)
-    dqn_4.run()
+    # dqn_4.run()
+
+    env_config['compute_reward'] = None
+    env_config['reward_fct_str'] = "default"
+    experiment_config['exp_id'] = "5"
+    experiment_config['n_episodes_train'] = 500
+    experiment_config['exp_repeat'] = 3
+    dqn_5 = GymExperiment(env_config, agent_config, experiment_config,
+                          lambda x: DQN_2_Wrapper(**x),
+                          save_experiment_output=save_ps_output,
+                          test_env_config=test_env_config)
+    # dqn_5.run()
+
+    experiment_config['exp_id'] = "6"
+    experiment_config['n_episodes_train'] = 500
+    experiment_config['exp_repeat'] = 3
+    dqn_6 = GymExperiment(env_config, agent_config, experiment_config,
+                          lambda x: DQN_2_Delta_Wrapper(**x),
+                          save_experiment_output=save_ps_output,
+                          test_env_config=test_env_config)
+    dqn_6.run()
