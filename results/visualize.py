@@ -309,8 +309,8 @@ def plot_two_perf_dist(baseline, controller, fig_size=(12, 25)):
 def plot_perf_dist(baseline, controllers, labels, fig_size=(12, 25), x_label=""):
     fig_x, fig_y = fig_size
     figsize(fig_x, fig_y)
-    x = [pd.read_csv(controller + "/exploit_performance.csv", header=None) for controller in controllers]
-    y = pd.read_csv(baseline + "/mses.csv", header=None)[0].values
+    x = [pd.read_csv(controller + "/test_mse.csv", header=None) for controller in controllers]
+    y = pd.read_csv(baseline + "/test_mse.csv", header=None)[0].values
     y_mean = y.mean()
     y_std = y.std()
     n = x[0].shape[1]
