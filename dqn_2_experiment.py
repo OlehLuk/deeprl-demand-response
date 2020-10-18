@@ -65,13 +65,21 @@ if __name__ == '__main__':
                           save_experiment_output=save_ps_output,
                           test_env_config=test_env_config)
     # dqn_3.run()
+
+    experiment_config['exp_id'] = "10_ReLU"
+    dqn_10 = GymExperiment(env_config, agent_config, experiment_config,
+                          lambda x: DQN_2_Delta_Wrapper(**x),
+                          save_experiment_output=save_ps_output,
+                          test_env_config=test_env_config)
+    dqn_10.run()
+
     agent_config['capacity'] = 2048
     experiment_config['exp_id'] = "7"
     dqn_7 = GymExperiment(env_config, agent_config, experiment_config,
                           lambda x: DQN_2_Delta_Wrapper(**x),
                           save_experiment_output=save_ps_output,
                           test_env_config=test_env_config)
-    dqn_7.run()
+    # dqn_7.run()
 
     agent_config['capacity'] = 512
     agent_config['batch_size'] = 32
@@ -80,7 +88,7 @@ if __name__ == '__main__':
                           lambda x: DQN_2_Delta_Wrapper(**x),
                           save_experiment_output=save_ps_output,
                           test_env_config=test_env_config)
-    dqn_8.run()
+    # dqn_8.run()
 
     agent_config['capacity'] = 2048
     agent_config['batch_size'] = 256
@@ -89,7 +97,7 @@ if __name__ == '__main__':
                           lambda x: DQN_2_Delta_Wrapper(**x),
                           save_experiment_output=save_ps_output,
                           test_env_config=test_env_config)
-    dqn_9.run()
+    #   dqn_9.run()
 
     env_config['compute_reward'] = lambda u, v: 1/abs(u-v)
     env_config['reward_fct_str'] = "lambda u, v: 1 / abs(u - v)"

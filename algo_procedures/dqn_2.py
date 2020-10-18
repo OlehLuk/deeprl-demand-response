@@ -24,12 +24,14 @@ class DQN(torch.nn.Module):
             torch.nn.Linear(input_dim, hidden_dim),
             torch.nn.BatchNorm1d(hidden_dim),
             torch.nn.PReLU()
+            # torch.nn.ReLU()
         )
 
         self.layer2 = torch.nn.Sequential(
             torch.nn.Linear(hidden_dim, hidden_dim),
             torch.nn.BatchNorm1d(hidden_dim),
             torch.nn.PReLU()
+            # torch.nn.ReLU()
         )
 
         self.final = torch.nn.Linear(hidden_dim, output_dim)
