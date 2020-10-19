@@ -1,20 +1,21 @@
 import numpy as np
 
-from algo_procedures.dqn_2 import DQN2Agent, ReplayMemory, train_helper, epsilon_annealing
+from algo_procedures.double_dqn_2 import Double_DQN2Agent, ReplayMemory, train_helper, epsilon_annealing
 from pipeline import calc_mse
 from pipeline.experiment import AgentWrapper
 
 
-class DQN_2_Delta_Wrapper(AgentWrapper):
+class Double_DQN_2_Delta_Wrapper(AgentWrapper):
     def __init__(self, max_n_steps, input_dim,
                  hidden_dim, capacity,
                  gamma, batch_size, min_eps,
                  eps_decrease_last_episode, actions,
-                 *args, **kwargs):
+                 target_update):
+        self.target_update = target_update
         self.actions = actions
         self.min_eps = min_eps
         self.eps_decrease_last_episode = eps_decrease_last_episode
-        self.agent = DQN2Agent(input_dim + 1, len(actions), hidden_dim)
+        self.agent = Double_DQN2Agent(input_dim + 1, len(actions), hidden_dim, target_update)
         self.replay_memory = ReplayMemory(capacity)
         self.max_n_steps = max_n_steps
         self.gamma = gamma
@@ -47,6 +48,7 @@ class DQN_2_Delta_Wrapper(AgentWrapper):
                 minibatch = self.replay_memory.pop(self.batch_size)
                 train_helper(self.agent, minibatch, self.gamma)
 
+            self.agent.target_update_step()
             state = next_state
             delta = next_delta
             action_index = self.agent.get_action(np.array([*state, delta]), eps)

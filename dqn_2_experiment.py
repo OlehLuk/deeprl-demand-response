@@ -4,6 +4,7 @@ model = load_fmu(Project.get_fmu("PS_20TCL_v1.fmu"))
 import logging
 import time
 
+from algo_procedures.double_dqn_2_delta_procedure import Double_DQN_2_Delta_Wrapper
 from algo_procedures.dqn_2_delta_procedure import DQN_2_Delta_Wrapper
 from algo_procedures.dqn_2_procedure import DQN_2_Wrapper
 from pipeline.experiment import GymExperiment
@@ -66,12 +67,20 @@ if __name__ == '__main__':
                           test_env_config=test_env_config)
     # dqn_3.run()
 
+    experiment_config['exp_id'] = "12"
+    agent_config['target_update'] = 1000
+    dqn_12 = GymExperiment(env_config, agent_config, experiment_config,
+                          lambda x: Double_DQN_2_Delta_Wrapper(**x),
+                          save_experiment_output=save_ps_output,
+                          test_env_config=test_env_config)
+    dqn_12.run()
+
     experiment_config['exp_id'] = "10_ReLU"
     dqn_10 = GymExperiment(env_config, agent_config, experiment_config,
                           lambda x: DQN_2_Delta_Wrapper(**x),
                           save_experiment_output=save_ps_output,
                           test_env_config=test_env_config)
-    dqn_10.run()
+    # dqn_10.run()
 
     agent_config['capacity'] = 2048
     experiment_config['exp_id'] = "7"
@@ -89,6 +98,15 @@ if __name__ == '__main__':
                           save_experiment_output=save_ps_output,
                           test_env_config=test_env_config)
     # dqn_8.run()
+
+    agent_config['capacity'] = 1024
+    agent_config['batch_size'] = 32
+    experiment_config['exp_id'] = "11"
+    dqn_11 = GymExperiment(env_config, agent_config, experiment_config,
+                          lambda x: DQN_2_Delta_Wrapper(**x),
+                          save_experiment_output=save_ps_output,
+                          test_env_config=test_env_config)
+    dqn_11.run()
 
     agent_config['capacity'] = 2048
     agent_config['batch_size'] = 256
