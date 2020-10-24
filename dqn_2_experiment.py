@@ -73,7 +73,39 @@ if __name__ == '__main__':
                           lambda x: Double_DQN_2_Delta_Wrapper(**x),
                           save_experiment_output=save_ps_output,
                           test_env_config=test_env_config)
-    dqn_12.run()
+    # dqn_12.run()
+
+    experiment_config['exp_id'] = "13"
+    agent_config['target_update'] = 10000
+    dqn_13 = GymExperiment(env_config, agent_config, experiment_config,
+                           lambda x: Double_DQN_2_Delta_Wrapper(**x),
+                           save_experiment_output=save_ps_output,
+                           test_env_config=test_env_config)
+    # dqn_13.run()
+
+    experiment_config['exp_id'] = "14"
+    agent_config['target_update'] = 10
+    dqn_14 = GymExperiment(env_config, agent_config, experiment_config,
+                           lambda x: Double_DQN_2_Delta_Wrapper(**x),
+                           save_experiment_output=save_ps_output,
+                           test_env_config=test_env_config)
+    dqn_14.run()
+
+    experiment_config['exp_id'] = "15"
+    agent_config['target_update'] = 1
+    dqn_15 = GymExperiment(env_config, agent_config, experiment_config,
+                           lambda x: Double_DQN_2_Delta_Wrapper(**x),
+                           save_experiment_output=save_ps_output,
+                           test_env_config=test_env_config)
+    dqn_15.run()
+
+    experiment_config['exp_id'] = "16"
+    agent_config['target_update'] = 100
+    dqn_16 = GymExperiment(env_config, agent_config, experiment_config,
+                           lambda x: Double_DQN_2_Delta_Wrapper(**x),
+                           save_experiment_output=save_ps_output,
+                           test_env_config=test_env_config)
+    dqn_16.run()
 
     experiment_config['exp_id'] = "10_ReLU"
     dqn_10 = GymExperiment(env_config, agent_config, experiment_config,
@@ -106,7 +138,7 @@ if __name__ == '__main__':
                           lambda x: DQN_2_Delta_Wrapper(**x),
                           save_experiment_output=save_ps_output,
                           test_env_config=test_env_config)
-    dqn_11.run()
+    # dqn_11.run()
 
     agent_config['capacity'] = 2048
     agent_config['batch_size'] = 256
