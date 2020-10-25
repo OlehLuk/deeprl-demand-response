@@ -112,7 +112,7 @@ class Double_DQN2Agent(object):
         """
         self.target_update = target_update
         self.dqn = DQN(input_dim, output_dim, hidden_dim)
-        self.trget_dqn = DQN(input_dim, output_dim, hidden_dim)
+        self.target_dqn = DQN(input_dim, output_dim, hidden_dim)
 
         self.target_dqn = DQN(input_dim, output_dim, hidden_dim)
         self.copy_dqn_to_target()
