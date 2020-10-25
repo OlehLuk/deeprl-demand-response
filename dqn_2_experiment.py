@@ -73,7 +73,7 @@ if __name__ == '__main__':
                           lambda x: Double_DQN_2_Delta_Wrapper(**x),
                           save_experiment_output=save_ps_output,
                           test_env_config=test_env_config)
-    # dqn_12.run()
+    dqn_12.run()
 
     experiment_config['exp_id'] = "13"
     agent_config['target_update'] = 10000
@@ -81,7 +81,7 @@ if __name__ == '__main__':
                            lambda x: Double_DQN_2_Delta_Wrapper(**x),
                            save_experiment_output=save_ps_output,
                            test_env_config=test_env_config)
-    # dqn_13.run()
+    dqn_13.run()
 
     experiment_config['exp_id'] = "14"
     agent_config['target_update'] = 10
@@ -89,9 +89,9 @@ if __name__ == '__main__':
                            lambda x: Double_DQN_2_Delta_Wrapper(**x),
                            save_experiment_output=save_ps_output,
                            test_env_config=test_env_config)
-    # dqn_14.run()
+    dqn_14.run()
 
-    experiment_config['exp_id'] = "15"
+    experiment_config['exp_id'] = "17"
     agent_config['target_update'] = 1
     dqn_15 = GymExperiment(env_config, agent_config, experiment_config,
                            lambda x: Double_DQN_2_Delta_Wrapper(**x),
@@ -105,7 +105,7 @@ if __name__ == '__main__':
                            lambda x: Double_DQN_2_Delta_Wrapper(**x),
                            save_experiment_output=save_ps_output,
                            test_env_config=test_env_config)
-    # dqn_16.run()
+    dqn_16.run()
 
     experiment_config['exp_id'] = "10_ReLU"
     dqn_10 = GymExperiment(env_config, agent_config, experiment_config,

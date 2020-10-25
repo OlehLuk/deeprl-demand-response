@@ -168,6 +168,16 @@ class Double_DQN2Agent(object):
         states = self._to_variable(states.reshape(-1, self.input_dim))
         return self.target_dqn(states)
 
+    def get_Q_main(self, states: np.ndarray) -> torch.FloatTensor:
+        """Returns `Q-value`
+        Args:
+            states (np.ndarray): 2-D Tensor of shape (n, input_dim)
+        Returns:
+            torch.FloatTensor: 2-D Tensor of shape (n, output_dim)
+        """
+        states = self._to_variable(states.reshape(-1, self.input_dim))
+        return self.dqn(states)
+
     def train(self, Q_pred: torch.FloatTensor, Q_true: torch.FloatTensor) -> float:
         """Computes `loss` and backpropagation
         Args:
@@ -202,8 +212,8 @@ def train_helper(agent: Double_DQN2Agent, minibatch: List[Transition], gamma: fl
     next_states = np.vstack([x.next_state for x in minibatch])
     done = np.array([x.done for x in minibatch])
 
-    Q_predict = agent.get_Q(states)
-    Q_target = Q_predict.clone().data.numpy()
+    Q_predict = agent.get_Q_main(states)
+    Q_target = agent.get_Q(states).data.numpy()
     Q_target[np.arange(len(Q_target)), actions] = rewards + gamma * np.max(agent.get_Q(next_states).data.numpy(), axis=1) * ~done
     Q_target = agent._to_variable(Q_target)
 
