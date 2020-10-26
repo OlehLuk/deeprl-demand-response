@@ -91,7 +91,7 @@ if __name__ == '__main__':
                            test_env_config=test_env_config)
     dqn_14.run()
 
-    experiment_config['exp_id'] = "17"
+    experiment_config['exp_id'] = "15"
     agent_config['target_update'] = 1
     dqn_15 = GymExperiment(env_config, agent_config, experiment_config,
                            lambda x: Double_DQN_2_Delta_Wrapper(**x),
