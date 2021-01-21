@@ -1,3 +1,6 @@
+from project import Project
+from pyfmi import load_fmu
+model = load_fmu(Project.get_fmu("PS_40TCL_om12.fmu"))
 import logging
 import time
 
@@ -20,7 +23,7 @@ def baseline_experiment(folder, ks, p_ref=1.2):
             'p_reff_amplitude': 0,
             'p_reff_period': 200,
             'get_seed': lambda: round(time.time()),
-            'path': Project.get_fmu("PS_20TCL_v1.fmu"),
+            'path': Project.get_fmu("PS_40TCL_om12.fmu"),
             'simulation_start_time': 0
         }
         test_env_config = {
@@ -31,7 +34,8 @@ def baseline_experiment(folder, ks, p_ref=1.2):
             'compute_reward': None,
             'p_reff_amplitude': 0,
             'p_reff_period': 200,
-            'path': Project.get_fmu("PS_20TCL_v1.fmu"),
+            # 'path': Project.get_fmu("PS_20TCL_v1.fmu"),
+            'path': Project.get_fmu("PS_40TCL_om12.fmu"),
             'simulation_start_time': 0
         }
 
@@ -55,6 +59,8 @@ def baseline_experiment(folder, ks, p_ref=1.2):
 
 
 if __name__ == '__main__':
-    baseline_experiment("results/baseline/p_ref=1.2", ks=[0, 1, 2, 3, 4, 5, 6, 7])
+    # baseline_experiment("results/baseline_tcl_40/p_ref=2.3", ks=[0, 1, 2, 3, 4, 5, 6, 7], p_ref=2.3)
+    # baseline_experiment("results/baseline_tcl_40/p_ref=1.2", ks=[0])
+    baseline_experiment("results/baseline_tcl_40/p_ref=1.2_", ks=[5])
     # baseline_experiment("results/baseline/p_ref=1.2", ks=[3])
     # baseline_experiment("results/baseline", ks=[3])

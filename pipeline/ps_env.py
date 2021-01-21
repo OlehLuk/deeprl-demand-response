@@ -12,7 +12,8 @@ from project import Project
 logger = logging.getLogger(__name__)
 
 
-P_DIFF_THRESHOLD = 1
+# P_DIFF_THRESHOLD = 1
+P_DIFF_THRESHOLD = 10
 
 
 def calc_mse(a, b):
