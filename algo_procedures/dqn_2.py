@@ -24,12 +24,14 @@ class DQN(torch.nn.Module):
             torch.nn.Linear(input_dim, hidden_dim),
             torch.nn.BatchNorm1d(hidden_dim),
             torch.nn.PReLU()
+            # torch.nn.ReLU()
         )
 
         self.layer2 = torch.nn.Sequential(
             torch.nn.Linear(hidden_dim, hidden_dim),
             torch.nn.BatchNorm1d(hidden_dim),
             torch.nn.PReLU()
+            # torch.nn.ReLU()
         )
 
         self.final = torch.nn.Linear(hidden_dim, output_dim)
@@ -250,7 +252,7 @@ def get_env_dim(env: gym.Env) -> Tuple[int, int]:
     return input_dim, output_dim
 
 
-def epsilon_annealing(epsiode: int, max_episode: int, min_eps: float) -> float:
+def epsilon_annealing(episode: int, max_episode: int, min_eps: float) -> float:
     """Returns 𝜺-greedy
     1.0---|\
           | \
@@ -259,7 +261,7 @@ def epsilon_annealing(epsiode: int, max_episode: int, min_eps: float) -> float:
               |
               max_episode
     Args:
-        epsiode (int): Current episode (0<= episode)
+        episode (int): Current episode (0<= episode)
         max_episode (int): After max episode, 𝜺 will be `min_eps`
         min_eps (float): 𝜺 will never go below this value
     Returns:
@@ -267,7 +269,7 @@ def epsilon_annealing(epsiode: int, max_episode: int, min_eps: float) -> float:
     """
 
     slope = (min_eps - 1.0) / max_episode
-    return max(slope * epsiode + 1.0, min_eps)
+    return max(slope * episode + 1.0, min_eps)
 
 
 def main(env_name, hidden_dim, capacity, n_episode, max_episode=None, batch_size=128, min_eps=0.01):

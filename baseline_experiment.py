@@ -1,7 +1,9 @@
+from project import Project
+from pyfmi import load_fmu
+model = load_fmu(Project.get_fmu("PS_40TCL_om12.fmu"))
 import logging
 import time
 
-from pipeline import PSTestSeed
 from pipeline.ps_env import save_ps_output
 from project import Project
 
@@ -21,10 +23,9 @@ def baseline_experiment(folder, ks, p_ref=1.2):
             'p_reff_amplitude': 0,
             'p_reff_period': 200,
             'get_seed': lambda: round(time.time()),
-            'path': Project.get_fmu("PS_20TCL_v1.fmu"),
+            'path': Project.get_fmu("PS_40TCL_om12.fmu"),
             'simulation_start_time': 0
         }
-        fixed_test_set = PSTestSeed(100)
         test_env_config = {
             "entry_point": "pipeline:PSEnvV1",
             'p_reff': p_ref,
@@ -33,8 +34,8 @@ def baseline_experiment(folder, ks, p_ref=1.2):
             'compute_reward': None,
             'p_reff_amplitude': 0,
             'p_reff_period': 200,
-            'get_seed': lambda: fixed_test_set.get_seed(),
-            'path': Project.get_fmu("PS_20TCL_v1.fmu"),
+            # 'path': Project.get_fmu("PS_20TCL_v1.fmu"),
+            'path': Project.get_fmu("PS_40TCL_om12.fmu"),
             'simulation_start_time': 0
         }
 
@@ -48,7 +49,7 @@ def baseline_experiment(folder, ks, p_ref=1.2):
             "exp_id": f"k={k}",
             "exp_repeat": 1,
             "n_episodes_train": 0,
-            "n_episodes_test": 5
+            "n_episodes_test": 100
         }
         baseline = GymExperiment(env_config, agent_config, experiment_config,
                                  lambda x: ConstantControlWrapper(**x),
@@ -58,4 +59,8 @@ def baseline_experiment(folder, ks, p_ref=1.2):
 
 
 if __name__ == '__main__':
-    baseline_experiment("results/baseline/p_ref=1.2", ks=[5])
+    # baseline_experiment("results/baseline_tcl_40/p_ref=2.3", ks=[0, 1, 2, 3, 4, 5, 6, 7], p_ref=2.3)
+    # baseline_experiment("results/baseline_tcl_40/p_ref=1.2", ks=[0])
+    baseline_experiment("results/baseline_tcl_40/p_ref=1.2_", ks=[5])
+    # baseline_experiment("results/baseline/p_ref=1.2", ks=[3])
+    # baseline_experiment("results/baseline", ks=[3])

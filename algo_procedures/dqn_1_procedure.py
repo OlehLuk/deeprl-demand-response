@@ -1,4 +1,5 @@
 from algo_procedures.dqn_1 import DqnAgent
+from pipeline import calc_mse
 from pipeline.experiment import AgentWrapper
 
 
@@ -29,7 +30,8 @@ class DQN_1_Wrapper(AgentWrapper):
             state = next_state
             if done:
                 break
-
+        mse = calc_mse(output['p_actual'], output['p_reference'])
+        output['mse'] = mse
         return output
 
     def run_one_test_episode(self, env) -> dict:
@@ -48,5 +50,6 @@ class DQN_1_Wrapper(AgentWrapper):
             action = self.agent.use(next_state)
             if done:
                 break
-
+        mse = calc_mse(output['p_actual'], output['p_reference'])
+        output['mse'] = mse
         return output

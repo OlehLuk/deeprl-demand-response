@@ -4,6 +4,8 @@ import os
 import json
 import numpy as np
 
+from pipeline import PSTestSeed
+
 
 def save_dict_to_json(dictionary, exp_subfolder, file_name):
     exp_config_file = os.path.join(exp_subfolder, file_name)
@@ -39,8 +41,8 @@ class GymExperiment:
         if test_env_config is None:
             test_env_entry_point = train_env_config.get("entry_point", "environments:JModelicaCSCartPoleEnv")
         else:
-            test_env_entry_point = test_env_config.pop("entry_point", "environments:JModelicaCSCartPoleEnv")
-        train_env_entry_point = train_env_config.pop("entry_point", "environments:JModelicaCSCartPoleEnv")
+            test_env_entry_point = test_env_config.get("entry_point", "environments:JModelicaCSCartPoleEnv")
+        train_env_entry_point = train_env_config.get("entry_point", "environments:JModelicaCSCartPoleEnv")
         self.env_entry_point = {"train": train_env_entry_point,
                                 "test": test_env_entry_point}
 
@@ -65,18 +67,22 @@ class GymExperiment:
     def run(self):
         exp_subfolder = self.create_setup()
         env_train = self.create_env("train")
-        env_test = self.create_env("test")
 
         exec_times = []
         all_outputs = []
 
         for i in range(self.exp_repeat):
             # TODO: add a progress bar
+            fixed_test_set = PSTestSeed(4*(self.n_episodes_test+self.n_episodes_train))
+            self.env_config["test"]["get_seed"] = lambda: fixed_test_set.get_seed()
+            env_test = self.create_env("test")
             start = time.time()
 
             output = self.run_one_experiment(env_train, env_test)
             exec_times.append(time.time() - start)
             all_outputs.append(output)
+            env_test.close()
+            del gym.envs.registry.env_specs[f"test_{self.env_name}"]
 
         self.save_experiment_output(all_outputs, exp_subfolder)
 
@@ -86,9 +92,7 @@ class GymExperiment:
                    fmt="%d")
 
         env_train.close()
-        env_test.close()
         del gym.envs.registry.env_specs[f"train_{self.env_name}"]
-        del gym.envs.registry.env_specs[f"test_{self.env_name}"]
 
     def create_env(self, mode="train"):
         from gym.envs.registration import register
@@ -120,12 +124,10 @@ class GymExperiment:
             # TODO: allow early stopping?
             episode_output = agent_wrapper.run_one_train_episode(env_train)
             exp_train_output.append(episode_output)
-            env_train.reset()
 
         exp_test_output = []
         for i in range(self.n_episodes_test):
             episode_output = agent_wrapper.run_one_test_episode(env_test)
             exp_test_output.append(episode_output)
-            env_test.reset()
 
         return exp_train_output, exp_test_output
